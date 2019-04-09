@@ -26,10 +26,9 @@ cunter = 0
 def shutdown_session(exception=None):
     db_session.remove()
 
-
 @app.route("/longest_tracks")
 def longest_tracks():
-    tracks = db_session.query(models.tracks).order_by(desc(models.tracks.Milliseconds)).limit(10)
+    tracks = db_session.query(models.Track).order_by(models.Track.milliseconds.desc()).limit(10).all()
     return jsonify(dict(tracks))
 
 if __name__ == "__main__":
