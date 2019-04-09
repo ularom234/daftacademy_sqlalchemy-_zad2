@@ -32,8 +32,10 @@ def longest_tracks():
         return get_tracks()
     
 def get_tracks():
-    tracks = db_session.query(models.Track).order_by(models.Track.milliseconds).limit(10).all()
-    return tracks
+    tracks = db_session.query(models.Track).order_by(models.Track.milliseconds).limit(10)
+    return "<br>".join(
+        f"{idx}. {tracks}" for idx, tracks in enumerate(tracks)
+
 
                           
 @app.route("/artists")
