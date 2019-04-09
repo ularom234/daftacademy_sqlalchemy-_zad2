@@ -43,8 +43,7 @@ def longest_tracks_by_artist():
         raise InvalidUsage('missing artist')
 
     try:
-        tracks = db_session.query(models.Track).filter(models.Track.Album.Artist.name == artist).order_by(models.Track.milliseconds.desc()).limit(10).all()
-        print(tracks)
+        tracks = db_session.query(models.Track).join(models.Track.album).join(models.Album.artist).filter(models.Artist.name == art).order_by(models.Track.milliseconds.desc()).limit(10).all()
     except:
         return 400
 
