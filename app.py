@@ -25,32 +25,7 @@ app = Flask(__name__)
 def shutdown_session(exception=None):
     db_session.remove()
                           
-@app.route("/artists", methods= ["GET", "POST"])
-def artists():
-    if request.method == "GET":
-        return get_artists()
-    elif request.method == "POST":
-        return post_artists()
-    abort(405)
 
-def post_artist():
-    data = request.json
-    new_name = data.get("name")
-    if new_name is None:
-        abort(404)
-
-    db_session.add(Artist.name = new_name)
-    db_session.commit()
-
-    artist = db_session.query(models.Artist).filter(models.Artist.name = new_name).one()
-
-    return jsonify(dict(artist))
-
-def get_artists():
-    artists = db_session.query(models.Artist).order_by(models.Artist.name)
-    return "<br>".join(
-        f"{idx}. {artist.name}" for idx, artist in enumerate(artists)
-    )
 
 
 @app.route("/longest_tracks")
