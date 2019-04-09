@@ -29,7 +29,7 @@ def shutdown_session(exception=None):
 
 @app.route("/longest_tracks")
 def longest_tracks():
-    tracks = db_session.query(models.tracks).order_by(models.tracks.Milliseconds.desc()).limit(10)
+    tracks = db_session.query(models.tracks).order_by(desc(models.tracks.Milliseconds)).limit(10)
     return jsonify(dict(tracks))
 
 if __name__ == "__main__":
