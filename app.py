@@ -55,7 +55,7 @@ def get_artists():
 
 @app.route("/longest_tracks")
 def longest_tracks():
-    tracks = db_session.query(models.Track).order_by(desc(models.Track.milliseconds)).limit(10).all()
+    tracks = db_session.query(models.Track).order_by(models.Track.milliseconds.desc()).limit(10).all()
     return jsonify(dict(row for row in tracks))
 
 @app.route("/longest_tracks_by_artist")
@@ -68,7 +68,7 @@ def longest_tracks_by_artist():
         raise InvalidUsage('missing artist')
 
     try:
-        tracks = db_session.query(models.Track).filter(models.Track.Album.Artist.name == artist).order_by(desc(models.Track.milliseconds)).limit(10).all()
+        tracks = db_session.query(models.Track).filter(models.Track.Album.Artist.name == artist).order_by(models.Track.milliseconds.desc()).limit(10).all()
         print(tracks)
     except:
         return 400
