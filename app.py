@@ -31,7 +31,7 @@ def shutdown_session(exception=None):
 @app.route("/longest_tracks")
 def longest_tracks():
     tracks = db_session.query(models.Track).order_by(models.Track.milliseconds.desc()).limit(10).all()
-    return jsonify(dict(row for row in tracks))
+    return jsonify(dict(tracks))
 
 @app.route("/longest_tracks_by_artist")
 def longest_tracks_by_artist():
@@ -48,7 +48,7 @@ def longest_tracks_by_artist():
     except:
         return 400
 
-    return jsonify(dict(row for row in tracks))
+    return jsonify(dict(tracks))
 
 
                           
