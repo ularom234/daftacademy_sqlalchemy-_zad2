@@ -37,12 +37,26 @@ def get_tracks():
 
 
                           
-@app.route("/artists")
+@app.route("/artists", methods= ["GET", "POST"])
 def artists():
     if request.method == "GET":
         return get_artists()
+    elif request.method == "POST":
+        return post_artists()
     abort(405)
 
+def post_artist():
+    data = request.json
+    new_name = data.get("name")
+    if new_name is None:
+        abort(404)
+
+    db_session.add(Artist.name = new_name)
+    db_session.commit()
+
+    artist = db_session.query(models.Artist).filter(models.Artist.name = new_name).one()
+
+    return jsonify(dict(artist))
 
 def get_artists():
     artists = db_session.query(models.Artist).order_by(models.Artist.name)
@@ -50,6 +64,28 @@ def get_artists():
         f"{idx}. {artist.name}" for idx, artist in enumerate(artists)
     )
 
+
+@app.route("/longest_tracks")
+def longest_tracks():
+    tracks = db_session.query(models.Track).order_by(desc(models.Track.milliseconds)).limit(10).all()
+    return jsonify(dict(row for row in tracks))
+
+@app.route("/longest_tracks_by_artist")
+def longest_tracks_by_artist():
+    a = request.args
+
+    if ('artist' in a):
+        artist = a['artist']
+    else:
+        raise InvalidUsage('missing artist')
+
+    try:
+        tracks = db_session.query(models.Track).filter(models.Track.Album.Artist.name == artist).order_by(desc(models.Track.milliseconds)).limit(10).all()
+        print(tracks)
+    except:
+        return 400
+
+    return jsonify(dict(row for row in tracks))
 
 
                           
