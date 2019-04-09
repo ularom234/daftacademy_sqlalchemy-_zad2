@@ -20,22 +20,10 @@ Base.query = db_session.query_property()
 
 app = Flask(__name__)
 
-cunter = 0
 
 @app.teardown_appcontext
 def shutdown_session(exception=None):
     db_session.remove()
-
-@app.route("/longest_tracks")
-def longest_tracks():
-    if request.method == "GET":
-        return get_tracks()
-    
-def get_tracks():
-    tracks = db_session.query(models.Track).order_by(models.Track.milliseconds).limit(10)
-    return tracks.all()
-
-
                           
 @app.route("/artists", methods= ["GET", "POST"])
 def artists():
