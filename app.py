@@ -1,7 +1,7 @@
 import os
 
 from flask import Flask, abort, render_template, request, jsonify
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine,func
 from sqlalchemy.orm import scoped_session, sessionmaker
 
 import models
