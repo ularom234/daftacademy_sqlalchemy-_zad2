@@ -63,18 +63,19 @@ def post_artists():
         db_session.commit()
 
         artist = db_session.query(models.Artist).filter(models.Artist.name == new_name).with_for_update().one()
-        result_dict = []
-        result_dict.append(artist.__dict__)
+        result_dict = artist.__dict__
         print(result_dict)
-        for i in result_dict:
-            del i['_sa_instance_state']
-            dic = list(i.keys())
-            for di in dic:
-                i[di] = str(i[di])
+
+        del result_dict['_sa_instance_state']
+        dic = list(result_dict.keys())
+        for di in dic:
+            result_dict[di] = str(result_dict[di])
 
         return jsonify(result_dict)
     except:
         abort(400)
+
+
 
 @app.route("/count_songs")
 def count_songs():
