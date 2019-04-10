@@ -63,7 +63,6 @@ def longest_tracks():
 @app.route("/longest_tracks_by_artist")
 def longest_tracks_by_artist():
     a = request.args
-    print(a)
     if ('artist' in a):
         art = a['artist']
     else:
@@ -84,7 +83,7 @@ def longest_tracks_by_artist():
                 i[di] = str(i[di])
 
     except:
-        return 404
+        abort(404)
 
     return jsonify(result_dict)
 
