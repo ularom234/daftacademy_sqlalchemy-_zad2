@@ -55,7 +55,7 @@ def longest_tracks():
         result_dict.append(u.__dict__)
     for i in result_dict:
         del i['_sa_instance_state']
-        a = str(i['unit_price'])
+        a = float(i['unit_price'])
         i['unit_price'] = a
     return jsonify(result_dict)
 
