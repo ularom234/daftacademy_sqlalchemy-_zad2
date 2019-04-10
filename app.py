@@ -55,8 +55,9 @@ def longest_tracks():
         result_dict.append(u.__dict__)
     for i in result_dict:
         del i['_sa_instance_state']
-        a = float(i['unit_price'])
-        i['unit_price'] = a
+        dic = list(i.keys())
+        for di in dic:
+            i[di] = str(i[di])
     return jsonify(result_dict)
 
 @app.route("/longest_tracks_by_artist")
@@ -75,11 +76,12 @@ def longest_tracks_by_artist():
             result_dict.append(u.__dict__)
         for i in result_dict:
             del i['_sa_instance_state']
-            a = str(i['unit_price'])
-            i['unit_price'] = a
+            dic = list(i.keys())
+            for di in dic:
+                i[di] = str(i[di])
 
     except:
-        return 400
+        return 404
 
     return jsonify(result_dict)
 
