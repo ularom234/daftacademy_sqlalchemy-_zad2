@@ -71,12 +71,12 @@ def longest_tracks_by_artist():
         #return 404
         
     try:
-        tracks = db_session.query(models.Track).join(models.Track.album).join(models.Album.artist).filter(models.Artist.name == art).order_by(models.Track.milliseconds.desc()).limit(10)
+        tracks = db_session.query(models.Track).join(models.Track.album).join(models.Album.artist).filter(models.Artist.name == art).order_by(models.Track.milliseconds.desc()).limit(10).all()
         if len(tacks) == 0:
             abort(404)
         else:
             result_dict = []
-            for u in tracks.all():
+            for u in tracks:
                 result_dict.append(u.__dict__)
             for i in result_dict:
                 del i['_sa_instance_state']
