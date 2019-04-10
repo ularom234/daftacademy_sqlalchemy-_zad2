@@ -44,7 +44,34 @@ def handle_invalid_usage(error):
 @app.teardown_appcontext
 def shutdown_session(exception=None):
     db_session.remove()
- 
+
+@app.route("/artists", methods=["POST"])
+def artists():
+    if request.method == "POST":
+        return post_artists()
+    abort(405)
+
+def post_artists():
+    data = request.json
+    new_name = data.get("name")
+    if new_name is None:
+        abort(400)
+        
+    art = models.Artist(name = new_name)
+    db_session.add(art)
+    db_session.commit()
+
+    artist = db_session.query(models.Artist).filter(models.Artist.name == new_name).first()
+    result_dict = []
+    result_dict.append(artist.__dict__)
+    print(result_dict)
+    for i in result_dict:
+        del i['_sa_instance_state']
+        dic = list(i.keys())
+        for di in dic:
+            i[di] = str(i[di])
+
+    return jsonify(result_dict)
 
 @app.route("/longest_tracks")
 def longest_tracks():
