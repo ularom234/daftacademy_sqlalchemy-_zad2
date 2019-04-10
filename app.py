@@ -20,34 +20,68 @@ Base.query = db_session.query_property()
 
 app = Flask(__name__)
 
+class InvalidUsage(Exception):
+    status_code = 400
 
+    def __init__(self, error, status_code=None, payload=None):
+        super().__init__(self)
+        self.error = error
+        if status_code is not None:
+            self.status_code = status_code
+        self.payload = payload
+
+    def to_dict(self):
+        rv = dict(self.payload or ())
+        rv['error'] = self.error
+        return rv
+
+@app.errorhandler(InvalidUsage)
+def handle_invalid_usage(error):
+    response = jsonify(error.to_dict())
+    response.status_code = error.status_code
+    return response
+    
 @app.teardown_appcontext
 def shutdown_session(exception=None):
     db_session.remove()
-                          
-
-
+ 
 
 @app.route("/longest_tracks")
 def longest_tracks():
-    tracks = db_session.query(models.Track).order_by(models.Track.milliseconds.desc()).limit(10).all()
-    return jsonify(tracks)
+    tracks = db_session.query(models.Track).order_by(models.Track.milliseconds.desc()).limit(10)
+    print (tracks)
+    result_dict = []
+    for u in tracks.all():
+        result_dict.append(u.__dict__)
+    for i in result_dict:
+        del i['_sa_instance_state']
+        a = str(i['unit_price'])
+        i['unit_price'] = a
+    return jsonify(result_dict)
 
 @app.route("/longest_tracks_by_artist")
 def longest_tracks_by_artist():
     a = request.args
-
+    print(a)
     if ('artist' in a):
-        artist = a['artist']
+        art = a['artist']
     else:
         raise InvalidUsage('missing artist')
-
     try:
-        tracks = db_session.query(models.Track).join(models.Track.album).join(models.Album.artist).filter(models.Artist.name == art).order_by(models.Track.milliseconds.desc()).limit(10).all()
+        tracks = db_session.query(models.Track).join(models.Track.album).join(models.Album.artist).filter(models.Artist.name == art).order_by(models.Track.milliseconds.desc()).limit(10)
+
+        result_dict = []
+        for u in tracks.all():
+            result_dict.append(u.__dict__)
+        for i in result_dict:
+            del i['_sa_instance_state']
+            a = str(i['unit_price'])
+            i['unit_price'] = a
+
     except:
         return 400
 
-    return jsonify(tracks)
+    return jsonify(result_dict)
 
 
                           
