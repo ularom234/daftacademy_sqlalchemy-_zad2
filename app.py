@@ -73,6 +73,34 @@ def post_artists():
 
     return jsonify(result_dict)
 
+@app.route("/count_songs")
+def count_songs():
+    a = request.args
+    if ('artist' in a):
+        art = str(a['artist'])
+        art = art.split(",")
+
+    else:
+        abort(404)
+    try:
+        result_dict = {}
+        songs = (
+            db_session.query(models.Artist.name, func.count(models.Track.name))
+                .join(models.Track.album)
+                .join(models.Album.artist)
+                .filter(models.Artist.name.in_(art))
+                .group_by(models.Artist.name)
+        )
+        if len(songs.all()) == 0:
+            abort(404)
+
+        for u in songs.all():
+            result_dict[u[0]] = u[1]
+
+        return jsonify(result_dict)
+    except:
+        abort(404)
+
 
 @app.route("/longest_tracks")
 def longest_tracks():
