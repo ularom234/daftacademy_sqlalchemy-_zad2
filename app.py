@@ -67,7 +67,8 @@ def longest_tracks_by_artist():
     if ('artist' in a):
         art = a['artist']
     else:
-        raise InvalidUsage('missing artist')
+        abort(404)
+        #raise InvalidUsage('missing artist')
         #return 404
         
     try:
