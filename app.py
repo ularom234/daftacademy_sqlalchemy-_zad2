@@ -21,7 +21,7 @@ Base.query = db_session.query_property()
 app = Flask(__name__)
 
 class InvalidUsage(Exception):
-    status_code = 400
+    status_code = 404
 
     def __init__(self, error, status_code=None, payload=None):
         super().__init__(self)
@@ -67,8 +67,8 @@ def longest_tracks_by_artist():
     if ('artist' in a):
         art = a['artist']
     else:
-        #raise InvalidUsage('missing artist')
-        return 404
+        raise InvalidUsage('missing artist')
+        #return 404
         
     try:
         tracks = db_session.query(models.Track).join(models.Track.album).join(models.Album.artist).filter(models.Artist.name == art).order_by(models.Track.milliseconds.desc()).limit(10)
