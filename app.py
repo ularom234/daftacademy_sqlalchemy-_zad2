@@ -49,29 +49,32 @@ def shutdown_session(exception=None):
 def artists():
     if request.method == "POST":
         return post_artists()
-    abort(405)
+    abort(400)
 
 def post_artists():
     data = request.json
     new_name = data.get("name")
     if new_name is None:
         abort(400)
-        
-    art = models.Artist(name = new_name)
-    db_session.add(art)
-    db_session.commit()
 
-    artist = db_session.query(models.Artist).filter(models.Artist.name == new_name).first()
-    result_dict = []
-    result_dict.append(artist.__dict__)
-    print(result_dict)
-    for i in result_dict:
-        del i['_sa_instance_state']
-        dic = list(i.keys())
-        for di in dic:
-            i[di] = str(i[di])
+    try:
+        art = models.Artist(name=new_name)
+        db_session.add(art)
+        db_session.commit()
 
-    return jsonify(result_dict)
+        artist = db_session.query(models.Artist).filter(models.Artist.name == new_name).with_for_update().one()
+        result_dict = []
+        result_dict.append(artist.__dict__)
+        print(result_dict)
+        for i in result_dict:
+            del i['_sa_instance_state']
+            dic = list(i.keys())
+            for di in dic:
+                i[di] = str(i[di])
+
+        return jsonify(result_dict)
+    except:
+        abort(400)
 
 @app.route("/count_songs")
 def count_songs():
